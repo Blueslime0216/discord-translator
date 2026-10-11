@@ -1,0 +1,46 @@
+{
+    "manifest_version": 3,
+    "name": "Discolator",
+    "version": "2.0.2",
+    "minimum_chrome_version": "102",
+    "description": "Discord multilingual translation with your OpenRouter API key",
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*.discord.com/*",
+                "*://discord.com/*"
+            ],
+            "js": [
+                "shared.js",
+                "content.js"
+            ]
+        }
+    ],
+    "permissions": [
+        "clipboardWrite",
+        "storage",
+        "unlimitedStorage"
+    ],
+    "host_permissions": [
+        "https://openrouter.ai/*",
+        "https://discord.com/*",
+        "https://*.discord.com/*"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "options_page": "options.html",
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "loading_1.png",
+                "loading_2.png",
+                "loading_3.png"
+            ],
+            "matches": [
+                "*://discord.com/*",
+                "*://*.discord.com/*"
+            ]
+        }
+    ]
+}

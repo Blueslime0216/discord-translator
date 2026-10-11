@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Translation Settings</title>
+    <style>
+        :root {
+            --bg-primary: #313338;
+            --bg-secondary: #2b2d31;
+            --bg-tertiary: #1e1f22;
+            --text-normal: #dbdee1;
+            --text-muted: #949ba4;
+            --header-primary: #f2f3f5;
+            --brand: #5865F2;
+            --brand-hover: #4752c4;
+            --danger: #da373c;
+            --danger-hover: #a12828;
+            --border: #4e5058;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-normal);
+            font-family: 'gg sans', 'Noto Sans', sans-serif;
+            margin: 0;
+            padding: 32px;
+        }
+
+        h2 {
+            color: var(--header-primary);
+            margin-top: 0;
+            margin-bottom: 24px;
+            font-size: 20px;
+        }
+
+        .toolbar {
+            display: flex;
+            margin-bottom: 24px;
+            background-color: var(--bg-secondary);
+            padding: 12px 16px;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .toolbar-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .search-group {
+            flex-grow: 1;
+            margin-right: 16px;
+        }
+
+        .toolbar-divider {
+            width: 1px;
+            height: 24px;
+            background-color: var(--border);
+            margin: 0 8px;
+            opacity: 0.5;
+        }
+
+        input[type="text"],
+        select {
+            background-color: var(--bg-tertiary);
+            color: var(--text-normal);
+            border: 1px solid transparent;
+            padding: 8px 12px;
+            border-radius: 4px;
+            outline: none;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+            height: 38px;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            border-color: var(--brand);
+        }
+
+        input[type="text"] {
+            width: 100%;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        button {
+            border: none;
+            border-radius: 4px;
+            padding: 0 16px;
+            height: 38px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            color: white;
+            transition: background-color 0.2s, opacity 0.2s, color 0.2s;
+            box-sizing: border-box;
+        }
+
+        .btn-primary {
+            background-color: var(--brand);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--brand-hover);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background-color: var(--danger-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--border);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background-color: #6d6f78;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .action-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            padding: 6px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: auto;
+        }
+
+        .action-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-normal);
+        }
+
+        .action-btn.delete-btn:hover {
+            color: var(--danger);
+            background-color: rgba(218, 55, 60, 0.15);
+        }
+
+        .action-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .btn-transparent {
+            background-color: transparent;
+            color: var(--text-normal);
+            border: none;
+            padding: 0 12px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .btn-transparent:hover {
+            text-decoration: underline;
+            color: white;
+            background-color: transparent;
+        }
+
+        .selection-action-bar {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #111214;
+            color: var(--text-normal);
+            padding: 10px 16px 10px 24px;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 32px;
+            z-index: 1000;
+            transition: bottom 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+            min-width: 320px;
+        }
+
+        .selection-action-bar.visible {
+            bottom: 32px;
+        }
+
+        .selected-count-text {
+            font-weight: 600;
+            font-size: 14px;
+            color: white;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        /* Discord Checkbox Customization */
+        .checkbox-wrapper {
+            display: flex;
+            justify-content: center;
+        }
+
+        input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--bg-tertiary);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.15s ease-in-out;
+            margin: 0;
+        }
+
+        input[type="checkbox"]:hover {
+            border-color: #8a8e94;
+        }
+
+        input[type="checkbox"]:checked {
+            background-color: var(--brand);
+            border-color: var(--brand);
+        }
+
+        input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 4px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        /* Improved Table UX */
+        tbody tr {
+            transition: background-color 0.1s ease;
+        }
+
+        tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.03);
+            cursor: pointer;
+        }
+
+        tbody tr.selected {
+            background-color: rgba(88, 101, 242, 0.08);
+        }
+
+        tbody tr.selected:hover {
+            background-color: rgba(88, 101, 242, 0.12);
+        }
+
+        /* Cell Interactions */
+        .text-cell {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .text-cell:hover {
+            text-decoration: underline;
+            text-decoration-color: rgba(255,255,255,0.2);
+        }
+
+        .checkbox-cell {
+            cursor: pointer;
+        }
+
+        .edit-input {
+            width: 100%;
+            background-color: var(--bg-tertiary);
+            color: var(--text-normal);
+            border: none;
+            padding: 4px 8px;
+            margin: -4px -8px;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: inherit;
+            line-height: inherit;
+            outline: 1px solid var(--brand);
+            box-sizing: border-box;
+        }
+
+        .revert-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            margin-left: 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            vertical-align: middle;
+        }
+
+        .revert-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .revert-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--bg-tertiary);
+        }
+
+        th {
+            background-color: var(--bg-tertiary);
+            color: var(--text-muted);
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        td {
+            font-size: 14px;
+        }
+
+        .row-actions {
+            white-space: nowrap;
+        }
+
+        .timestamp {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        /* Added translation settings are scoped to their own section. */
+        .translation-settings { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); }
+        .translation-settings fieldset { margin: 0; padding: 0; border: 0; }
+        .translation-settings .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .translation-settings .full { grid-column: 1 / -1; }
+        .translation-settings label { display: block; margin-bottom: 6px; }
+        .translation-settings input[type="password"] { width: 100%; box-sizing: border-box; background: var(--bg-tertiary); color: var(--text-normal); border: 1px solid transparent; border-radius: 4px; padding: 8px 12px; height: 38px; }
+        .translation-settings input[type="password"]:focus { outline: none; border-color: var(--brand); }
+        .translation-settings .help, .translation-settings .key-status { color: var(--text-muted); font-size: 13px; line-height: 1.5; }
+        .translation-settings .help { margin: 6px 0 0; }
+        .translation-settings .key-status { display: inline-block; margin-top: 7px; }
+        .translation-settings .actions { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+        .translation-settings .status, #cacheStatus { white-space: pre-wrap; overflow-wrap: anywhere; user-select: text; }
+        .translation-settings .status.error, #cacheStatus.error { color: #ffb3b5; }
+        #cacheStatus:empty { display: none; }
+        [hidden] { display: none !important; }
+        .trans-text .edit-input + .edit-input { margin-top: 12px; }
+        @media (max-width: 640px) { .translation-settings .settings-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+
+<body>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
+        <h2 style="margin: 0;">Translation Manager</h2>
+        <div id="cacheInfo" style="font-size: 13px; color: var(--text-muted); background: var(--bg-tertiary); padding: 4px 12px; border-radius: 12px; border: 1px solid var(--border);">
+            Cache Size: <span id="cacheSizeValue" style="color: var(--text-normal); font-weight: 600;">0.00 KB</span>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <div class="toolbar-group search-group">
+            <input type="text" id="searchInput" placeholder="Search original or translation...">
+            <select id="cacheLanguage" aria-label="Translation language"><option value="">All languages</option></select>
+        </div>
+
+        <div class="toolbar-divider"></div>
+
+        <div class="toolbar-group">
+            <select id="timeFilter">
+                <option value="0">Delete Old Data...</option>
+                <option value="1">Older than 1 Day</option>
+                <option value="7">Older than 7 Days</option>
+                <option value="30">Older than 30 Days</option>
+            </select>
+            <button id="deleteOldBtn" class="btn-danger">Clear</button>
+        </div>
+
+        <div class="toolbar-divider"></div>
+
+        <div class="toolbar-group">
+            <button id="exportBtn" class="btn-primary">Export JSON</button>
+            <button id="importBtn" class="btn-secondary">Import JSON</button>
+            <input type="file" id="fileInput" accept=".json" style="display:none">
+        </div>
+    </div>
+
+    <p id="cacheStatus" role="status" aria-live="polite"></p>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 4%; text-align: center;">
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="selectAllCheckbox">
+                    </div>
+                </th>
+                <th style="width: 33%;">Original</th>
+                <th style="width: 33%;">Translated</th>
+                <th style="width: 15%;">Date</th>
+                <th style="width: 15%;">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+
+    <div id="selectionActionBar" class="selection-action-bar">
+        <span id="selectedCountText" class="selected-count-text">1 item selected</span>
+        <div class="action-buttons">
+            <button id="deselectBtn" class="btn-transparent">Deselect</button>
+            <button id="bulkDeleteBtn" class="btn-danger">Delete</button>
+        </div>
+    </div>
+
+    <section class="translation-settings" aria-labelledby="settingsHeading">
+        <h2 id="settingsHeading">Translation settings</h2>
+        <form id="settingsForm">
+            <fieldset id="settingsFields" disabled>
+                <div class="settings-grid">
+                    <div>
+                        <label for="readingLanguage">Reading language</label>
+                        <input id="readingLanguage" type="text" list="languageList" required maxlength="64" spellcheck="false" aria-describedby="readingHelp">
+                        <p id="readingHelp" class="help">Translate messages in other languages into this language.</p>
+                    </div>
+                    <div>
+                        <label for="writingLanguage">Writing language</label>
+                        <input id="writingLanguage" type="text" list="languageList" required maxlength="64" spellcheck="false" aria-describedby="writingHelp">
+                        <p id="writingHelp" class="help">Translate your replies into this language.</p>
+                    </div>
+                    <datalist id="languageList"></datalist>
+                    <p class="help full">Select a language from the list or enter a language code (e.g. ko, en, ja, zh-Hans, zh-Hant). Simplified and Traditional Chinese are separate options. Translation quality varies by language and model.</p>
+                    <div>
+                        <label for="translationModel">Translation model</label>
+                        <input id="translationModel" type="text" required maxlength="160" spellcheck="false" aria-describedby="modelHelp">
+                        <p id="modelHelp" class="help">Enter an OpenRouter model ID. Image translation requires a model that supports image input.</p>
+                    </div>
+                    <div>
+                        <label for="detectorModel">Language detection model</label>
+                        <input id="detectorModel" type="text" value="Cloudflare Clef-flash" readonly>
+                        <p class="help">Used only for language detection. The model selected above handles translation.</p>
+                    </div>
+                    <div class="full">
+                        <label for="apiKey">OpenRouter API key</label>
+                        <input id="apiKey" type="password" autocomplete="new-password" placeholder="Enter a new API key" spellcheck="false" maxlength="512" aria-describedby="keyHelp keyStatus">
+                        <span id="keyStatus" class="key-status">Checking for a saved key…</span>
+                        <p id="keyHelp" class="help">Your key is stored only in this browser and is excluded from translation backups. This storage is not an encrypted vault. Leave this field blank to keep your saved key.</p>
+                        <p class="help">Text to translate, relevant earlier messages, and requested images are sent to OpenRouter and the selected model provider. Language detection and translation requests may incur API charges.</p>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button id="saveSettingsBtn" class="btn-primary" type="submit">Save settings</button>
+                    <button id="checkKeyBtn" class="btn-secondary" type="button">Check saved key</button>
+                    <button id="deleteKeyBtn" class="btn-danger" type="button">Delete saved key</button>
+                </div>
+            </fieldset>
+        </form>
+        <p id="settingsStatus" class="status" role="status" aria-live="polite"></p>
+        <div id="settingsErrorActions" class="actions" hidden>
+            <button id="copySettingsErrorBtn" class="btn-secondary" type="button">Copy error details</button>
+            <span id="settingsErrorCopyStatus" class="help" role="status" aria-live="polite"></span>
+        </div>
+    </section>
+
+    <script src="shared.js"></script>
+    <script src="options.js"></script>
+</body>
+
+</html>
